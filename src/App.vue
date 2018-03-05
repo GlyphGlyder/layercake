@@ -236,6 +236,14 @@ export default {
         let material = new THREE.MeshBasicMaterial( {color } );
         let mesh = new THREE.Mesh(geometry, material);
 
+        // You might have to translate it.  Check to see.
+        let translateMatch = paths[i].match(/transform="translate\((\-?\d+(\.\d+)?) (\-?\d+(\.\d+)?)\)"/);
+        if (translateMatch) {
+          mesh.position.x += parseFloat(translateMatch[1]);
+          mesh.position.y -= parseFloat(translateMatch[3]);
+        }
+        console.log(translateMatch);
+
         this.objects.push(mesh);
         this.object.add(mesh);
       }

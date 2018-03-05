@@ -14,7 +14,7 @@ export default {
 		// Each command begins with a letter.  Analyze the letter to
 		// understand the command.  While you're at it, get the points too.
 		let letter = command.match(/([a-zA-Z])((.)*)/);
-		let points = letter[2].split(/[\s\,]/);
+		let points = letter[2].match(/\-?\d+\.?\d*/g);
 
 		// Now for the fun
 		switch(letter[1]) {
@@ -99,7 +99,6 @@ export default {
 				// they require slightly different args.  Using some other asshole's
 				// code
 				// https://github.com/mrdoob/three.js/blob/master/examples/webgl_geometry_extrude_shapes2.html
-				console.log(points);
 				var radiusX = parseFloat(points[0]);
 				var radiusY = parseFloat(points[1]);
 				var xAngle = parseFloat(points[2]);
@@ -132,7 +131,7 @@ export default {
 
 				// This was causing some weird bullshit.  Getting rid of it.
 				// Mind you, this code is half a decade old.
-				// if ( laf === sf ) norm = - norm;
+				//if ( laf === sf ) norm = - norm;
 
 				var x2 = norm * radiusX * y1 / radiusY;
 				var y2 = norm * -radiusY * x1 / radiusX;
