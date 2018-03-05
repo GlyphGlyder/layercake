@@ -186,7 +186,7 @@ export default {
       // or may not have a decimal.  In some instances there's more than one
       // "point", in which case additional numbers may follow after a comma,
       // space, or negative sign as their seperator.
-      let pathCommandRegex = /([a-zA-Z]\-?\d+(\.\d+)?(([\s\,\-])*\d+(\.\d+)?)*)/g;
+      let pathCommandRegex = /([a-zA-Z](\-?\d+(\.\d+)?(([\s\,\-])*\d+(\.\d+)?)*)?)/g;
 
       let color = "#000000";
 
@@ -211,10 +211,23 @@ export default {
         // point command individually to turn it into a command we can apply
         // to our shape
         let shape = new THREE.Shape();
-        shape.autoClose = true;
+        let currentTarget = shape;
         for(var j = 0; j < pathCommands.length; j ++) {
 
-          helpers.shapeCommand(shape, pathCommands[j], this.originOffset);
+          if (pathCommands[j] == "Z" || pathCommands == "z") {
+            // Okay, this is tricky.  Basically though, a Z in the middle
+            // indicates we're cutting holes in the path.  If currentTarget
+            // == shape, then we simply assign a new Path object to
+            // currentTarget.  Otherwise, we're going to add currentTarget to
+            // shape's "holes" and add yet another path
+            if (currentTarget !== shape) {
+              shape.holes.push(currentTarget);
+            }
+            currentTarget = new THREE.Path();
+
+          } else {
+            helpers.shapeCommand(currentTarget, pathCommands[j], this.originOffset);
+          }
 
         }
 

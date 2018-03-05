@@ -15,6 +15,7 @@ export default {
 		// understand the command.  While you're at it, get the points too.
 		let letter = command.match(/([a-zA-Z])((.)*)/);
 		let points = letter[2].match(/\-?\d+\.?\d*/g);
+		console.log(letter[1]);
 
 		// Now for the fun
 		switch(letter[1]) {
@@ -102,8 +103,11 @@ export default {
 				var radiusX = parseFloat(points[0]);
 				var radiusY = parseFloat(points[1]);
 				var xAngle = parseFloat(points[2]);
-				var laf = parseInt(points[3]);
-				var sf = parseInt(points[4]);
+				var laf = (parseInt(points[3]) === 1);
+				var sf = (parseInt(points[4]) === 1);
+
+				console.log(laf);
+				console.log(sf);
 
 				let nx = 0;
 				let ny = 0;
@@ -121,6 +125,7 @@ export default {
 				var x = shape.currentPoint.x;
 				var y = shape.currentPoint.y;
 
+				// Calculate the start of the ar
 				var x1 = Math.cos( xAngle ) * ( x - nx ) / 2 + Math.sin( xAngle ) * ( y - ny ) / 2;
 				var y1 = - Math.sin( xAngle ) * ( x - nx ) / 2 + Math.cos( xAngle ) * ( y - ny ) / 2;
 
@@ -131,11 +136,13 @@ export default {
 
 				// This was causing some weird bullshit.  Getting rid of it.
 				// Mind you, this code is half a decade old.
-				//if ( laf === sf ) norm = - norm;
+				if ( sf !== laf ) norm = - norm;
 
+				// Then calculate the end of the arc
 				var x2 = norm * radiusX * y1 / radiusY;
 				var y2 = norm * -radiusY * x1 / radiusX;
 
+				// Calculate the center
 				var centerX = Math.cos( xAngle ) * x2 - Math.sin( xAngle ) * y2 + ( x + nx ) / 2;
 				var centerY = Math.sin( xAngle ) * x2 + Math.cos( xAngle ) * y2 + ( y + ny ) / 2;
 
@@ -157,6 +164,16 @@ export default {
 
 				shape.absarc(centerX, centerY, radiusX, startAng, startAng + deltaAng, sf);
 				break;
+			case ("Z"):
+			case ("z"):
+				shape.lineTo(shape.firstPoint.x, shape.firstPoint.y);
+				break;
+		}
+
+		if (shape.firstPoint === undefined) {
+			shape.firstPoint = Object.assign({}, shape.currentPoint);
+		} else if (letter[1] == "Z" || letter [1] == "z") {
+			shape.firstPoint = undefined;
 		}
 	}
 }
