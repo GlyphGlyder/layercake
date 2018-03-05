@@ -139,6 +139,8 @@ export default {
           r = rMatch[1];
         }
 
+        console.log(x + ", " + y + ", " + r);
+
         // Oh, and don't forget the color
         let colorMatch = circles[i].match(/style="(.)*fill:(#[a-f0-9]{0,6})(.)*"/i);
         if (colorMatch != null && colorMatch.length > 3) {
@@ -153,7 +155,7 @@ export default {
         let shape = new THREE.Shape();
         shape.moveTo(
           parseFloat(x) - this.originOffset.x,
-          this.originOffset.y - parseFloat(y) - r
+          this.originOffset.y - parseFloat(y) + r
         );
         shape.absarc(
           parseFloat(x) - this.originOffset.x,
@@ -170,8 +172,6 @@ export default {
         });
         let material = new THREE.MeshBasicMaterial({color});
         let mesh = new THREE.Mesh(geometry, material);
-        mesh.position.x = parseFloat(x) - this.originOffset.x;
-        mesh.position.y = this.originOffset.y - parseFloat(y);
 
         this.objects.push(mesh);
         this.object.add(mesh);
@@ -224,6 +224,7 @@ export default {
               shape.holes.push(currentTarget);
             }
             currentTarget = new THREE.Path();
+            currentTarget.moveTo(shape.currentPoint.x, shape.currentPoint.y);
 
           } else {
             helpers.shapeCommand(currentTarget, pathCommands[j], this.originOffset);
