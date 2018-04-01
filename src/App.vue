@@ -5,6 +5,11 @@
     </div>
 
     <div class="container form-container" v-if="!parsed">
+
+      <img src="assets/layercake.svg" style="max-width: 33%; max-height: 20%"/>
+      <h1>Layercake</h1>
+      <p class="lead">Put your SVGs in the oven, receive freshly-baked 3D models.</p>
+
       <form v-on:submit.prevent="parseSVG">
 
   			<textarea class="form-control" type="file" id="UploadPictures"
@@ -13,6 +18,7 @@
         <button type="submit">Submit</button>
 
   		</form>
+
     </div>
 
     <button class="btn btn-default save-button" v-if="parsed" v-on:click="save">
@@ -461,10 +467,15 @@ body, html {
 }
 
 .form-container {
-  min-height: 100%;
+  height: 100%;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+
+  & > * {
+    margin: 20px auto;
+  }
 
   form {
     display: block;
