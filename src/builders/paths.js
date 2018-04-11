@@ -5,7 +5,7 @@
 
 export default {
 
-	make: function(paths, offset) {
+	make: function(paths, offset, layer, layers) {
 
 		let meshes = [];
 		// This is the formula for a path command.  Every path begins with a
@@ -19,7 +19,7 @@ export default {
 
 		let firstNumberDecimalFront = "\\d*\\.\\d+"
 		let firstNumberDecimalBack = "\\d+(\\.\\d+)?"
-		let firstNumber = "(\\-?(" + firstNumberDecimalFront + "|" + firstNumberDecimalBack +"))";
+		let firstNumber = "(\\-?(" + firstNumberDecimalFront + "|" + firstNumberDecimalBack +"))?";
 
 		let subsequentNumberCommaSpace = "[\\s\\,]" + firstNumber;
 		let subsequentNumberNegative = "\\-(" + firstNumberDecimalFront + "|" + firstNumberDecimalBack + ")";
@@ -65,8 +65,12 @@ export default {
 					if (currentTarget !== shape) {
 						shape.holes.push(currentTarget);
 					}
+					let oldX = currentTarget.firstPoint.x;
+					let oldY = currentTarget.firstPoint.y;
 					currentTarget = new THREE.Path();
-					currentTarget.moveTo(shape.currentPoint.x, shape.currentPoint.y);
+					currentTarget.moveTo(oldX, oldY);
+
+					lastCommand = {letter: "Z"};
 
 				} else {
 					lastCommand = shapeCommand(currentTarget, pathCommands[j], lastCommand, offset);
@@ -99,6 +103,11 @@ export default {
 				mesh.position.x += parseFloat(translateMatch[1]);
 				mesh.position.y -= parseFloat(translateMatch[3]);
 			}
+
+			if (layer !== undefined && layers !== undefined) {
+				mesh.position.z = layers * 5 - layer * 5;
+			}
+
 
 			meshes.push(mesh);
 		}
@@ -225,6 +234,7 @@ var lineCommand = function(shape, points, offset, relative) {
 				shape.currentPoint.x + parseFloat(points[0]),
 				shape.currentPoint.y - parseFloat(points[1])
 			);
+			return;
 		}
 
 		shape.lineTo(
@@ -311,7 +321,6 @@ var shapeCommand = function(shape, command, lastCommand, offset) {
 	// Each command begins with a letter.  Analyze the letter to
 	// understand the command.  While you're at it, get the points too.
 	let letter = command.match(/([a-zA-Z])((.)*)/);
-	console.log(letter[2]);
 	let points = letter[2].match(/\-?(\d+\.?\d*|\d*\.\d+)/g);
 
 	// Now for the fun
@@ -414,10 +423,7 @@ var shapeCommand = function(shape, command, lastCommand, offset) {
 
 	if (shape.firstPoint === undefined) {
 		shape.firstPoint = Object.assign({}, shape.currentPoint);
-	} else if (letter[1] == "Z" || letter [1] == "z") {
-		shape.firstPoint = undefined;
 	}
-
 	return { letter: letter[1], points };
 }
 

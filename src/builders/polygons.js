@@ -14,10 +14,9 @@ export default {
 	 *	to the center.
 	 * @return: an array of threejs meshes.
 	 */
-	meshes: function(polygons, offset) {
+	meshes: function(polygons, offset, layer, layers) {
 
 		var meshes = [];
-
 		for(var i = 0; i < polygons.length; i ++) {
 
 			// Polygons are defined by an indefinite set of x,y pairs.  So, let's
@@ -58,6 +57,11 @@ export default {
 				});
 				let material = new THREE.MeshBasicMaterial({color});
 				let mesh = new THREE.Mesh(geometry, material);
+
+				if (layer !== undefined && layers !== undefined) {
+					mesh.position.z = layers * 5 - layer * 5;
+				}
+
 				meshes.push(mesh);
 
 			}

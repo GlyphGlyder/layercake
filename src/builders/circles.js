@@ -12,7 +12,7 @@ export default {
 	 * @param offset
 	 * @return an array of threejs meshes.
 	 */
-	make: function(circles, offset) {
+	make: function(circles, offset, layer, layers) {
 
 		var meshes = [];
 
@@ -77,6 +77,10 @@ export default {
 			});
 			let material = new THREE.MeshBasicMaterial({color});
 			let mesh = new THREE.Mesh(geometry, material);
+
+			if (layer !== undefined && layers !== undefined) {
+				mesh.position.z = layers * 5 - layer * 5;
+			}
 
 			meshes.push(mesh);
 

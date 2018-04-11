@@ -10,7 +10,7 @@
       and a form to copy/paste the raw SVG data -->
     <div class="container pre-parsed" v-if="!parsed">
 
-      <img src="assets/layercake.svg" style="max-width: 20%;"/>
+      <img src="/assets/layercake.svg" style="max-width: 20%;"/>
       <h1>Layercake</h1>
       <p class="lead">Put your SVGs in the oven, bake some delicious 3D models.</p>
 
@@ -80,18 +80,7 @@ export default {
       const polygonRegExp = /<polygon (.*)\/>/g;
       const pathRegExp = /<path (.*)\/>/g;
       const viewBoxRegExp = /viewBox="0 0 (\d+(\.\d+)?) (\d+(\.\d+)?)"/
-
-      // First, let's get all the rects
-      rects = this.svgRaw.match(rectRegExp);
-
-      // Then the circles
-      circles = this.svgRaw.match(circleRegExp);
-
-      // Then the polygons
-      polygons = this.svgRaw.match(polygonRegExp);
-
-      // And finally, the paths
-      paths = this.svgRaw.match(pathRegExp);
+      const groupRegExp = /<g[^>]*>((?!<\/g>)\s|(?!<\/g>).)*<\/g>/g;
 
       // Now, before we start adding shit we need to calculate the origin offset
       // we can do that by getting the viewbox
@@ -103,24 +92,80 @@ export default {
         this.originOffset.y = y / 2;
       }
 
-      // Alright the, now let's build our boxes
-      if (rects != null) {
-        meshes = builders.makeRects(rects, this.originOffset);
-      }
+      // Next, let's group together all the elements by whatever <g> element
+      // they fall into
+      let groups = this.svgRaw.match(groupRegExp);
+      if (groups != null) {
+        let _this = this;
+        groups.forEach(function(group, index) {
 
-      // Then our circles
-      if (circles != null) {
-        meshes = meshes.concat(builders.makeCircles(circles, this.originOffset));
-      }
+          // First, let's get all the rects
+          rects = group.match(rectRegExp);
 
-      // Then our polygons
-      if (polygons != null) {
-        meshes = meshes.concat(builders.makePolygons(polygons, this.originOoffset));
-      }
+          // Then the circles
+          circles = group.match(circleRegExp);
 
-      // And finally, those damned tricky paths
-      if (paths != null) {
-        meshes = meshes.concat(builders.makePaths(paths, this.originOffset));
+          // Then the polygons
+          polygons = group.match(polygonRegExp);
+
+          // And finally, the paths
+          paths = group.match(pathRegExp);
+
+          // Alright the, now let's build our boxes
+          if (rects != null) {
+            meshes = meshes.concat(builders.makeRects(rects, _this.originOffset, index, groups.length));
+          }
+
+          // Then our circles
+          if (circles != null) {
+            meshes = meshes.concat(builders.makeCircles(circles, _this.originOffset, index, groups.length));
+          }
+
+          // Then our polygons
+          if (polygons != null) {
+            meshes = meshes.concat(builders.makePolygons(polygons, _this.originOoffset, index, groups.length));
+          }
+
+          // And finally, those damned tricky paths
+          if (paths != null) {
+            meshes = meshes.concat(builders.makePaths(paths, _this.originOffset, index, groups.length));
+          }
+
+        });
+      } else {
+
+        // First, let's get all the rects
+        rects = this.svgRaw.match(rectRegExp);
+
+        // Then the circles
+        circles = this.svgRaw.match(circleRegExp);
+
+        // Then the polygons
+        polygons = this.svgRaw.match(polygonRegExp);
+
+        // And finally, the paths
+        paths = this.svgRaw.match(pathRegExp);
+
+        // Alright the, now let's build our boxes
+        if (rects != null) {
+          meshes = builders.makeRects(rects, this.originOffset);
+        }
+
+        // Then our circles
+        if (circles != null) {
+          meshes = meshes.concat(builders.makeCircles(circles, this.originOffset));
+        }
+
+        // Then our polygons
+        if (polygons != null) {
+          meshes = meshes.concat(builders.makePolygons(polygons, this.originOffset));
+        }
+
+        // And finally, those damned tricky paths
+        if (paths != null) {
+          meshes = meshes.concat(builders.makePaths(paths, this.originOffset));
+        }
+
       }
 
       // Now let's take all of our meshes and assign them to our array of

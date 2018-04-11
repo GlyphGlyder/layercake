@@ -4,7 +4,7 @@
 
 export default {
 
-	make: function(rects, offset) {
+	make: function(rects, offset, layer, layers) {
 
 		var meshes = [];
 
@@ -42,6 +42,8 @@ export default {
 			let yMatch = rects[i].match(/y="(\d+(\.\d+)?)"/);
 			if (yMatch != null && yMatch.length > 2) {
 				y = offset.y - parseFloat(yMatch[1]) - height / 2;
+			} else {
+				y = offset.y - height / 2;
 			}
 
 			// Finally, there may be a color associated with it.  Let's grab that
@@ -59,6 +61,10 @@ export default {
 			mesh.position.x = x;
 			mesh.position.y = y;
 			mesh.position.z = 2.5;
+
+			if (layer !== undefined && layers !== undefined) {
+				mesh.position.z = layers * 5 - layer * 5 + 2.5
+			}
 
 			meshes.push(mesh);
 		}
