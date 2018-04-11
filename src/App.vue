@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div id="app" style="height: 100%">
 
     <!-- Actual 3D model goes here.  Does nothing until after the SVG is parsed.
       Even so, we keep it around -->
@@ -8,28 +8,44 @@
 
     <!-- Pre-parsed content.  It's just the logo, a witty bit of microcopy,
       and a form to copy/paste the raw SVG data -->
-    <div class="container pre-parsed" v-if="!parsed">
+    <div style="height: 100%;" v-if="!parsed">
 
-      <img src="assets/layercake.svg" style="max-width: 20%;"/>
-      <h1>Layercake</h1>
-      <p class="lead">Put your SVGs in the oven, bake some delicious 3D models.</p>
+      <div class="container above-fold" >
 
-      <form v-on:submit.prevent="parseSVG">
+        <img src="assets/layercake.svg" style="max-width: 200px;"/>
+        <h1>Layercake</h1>
+        <p class="lead">Put your SVGs in the oven, bake some delicious 3D models.</p>
 
-  			<textarea class="form-control" type="file" id="UploadPictures"
-          rows="12" placeholder="Paste raw data here" v-model="svgRaw"></textarea>
-        <br/>
-        <button type="submit">Submit</button>
+        <div class="row">
+          <div class="col">
+            <a href="#SVGPaste" class="btn btn-primary">Paste in SVG content</a>
+          </div>
+        </div>
+      </div>
 
-  		</form>
+      <div class="container svg-paste" id="SVGPaste">
+
+        <p class="lead">Paste in <strong>all</strong> of the SVG data</p>
+        <form v-on:submit.prevent="parseSVG">
+
+    			<textarea class="form-control" type="file" id="UploadPictures"
+            rows="12" placeholder="Paste raw data here" v-model="svgRaw"></textarea>
+          <br/>
+          <button type="submit" class="btn btn-primary">Go</button>
+
+    		</form>
+
+      </div>
 
     </div>
 
     <!-- Post-parsed content.  For now it's just a button -->
-    <div class="post-parsed">
-      <button class="btn btn-default save-button" v-if="parsed" v-on:click="save">
+    <div class="post-parsed " v-if="parsed">
+      <button class="btn btn-default" v-on:click="save">
         Save
       </button>
+
+      <button class="btn btn-danger" v-if="parsed" v-on:click="undo">Undo</button>
     </div>
 
   </div>
@@ -194,6 +210,15 @@ export default {
       const buffer = ObjExporter.meshes(this.objects).then(function(blob) {
         saveAs(blob, 'svg-to-three.zip');
       });
+    },
+
+    undo: function() {
+      this.objects = [];
+      this.scene.remove(this.object);
+      this.object = new THREE.Object3D();
+      this.scene.add(this.object);
+      this.svgRaw = '';
+      this.parsed = false;
     }
 
   },
@@ -264,15 +289,15 @@ body, html {
   z-index: -100;
 }
 
-.save-button {
+.post-parsed {
   position: absolute;
   bottom: 10px;
   left: 10px;
   z-index: 100;
 }
 
-.pre-parsed {
-  min-height: 100%;
+.above-fold, .svg-paste {
+  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;

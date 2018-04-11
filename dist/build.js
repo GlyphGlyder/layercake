@@ -5098,6 +5098,22 @@ exports.clearImmediate = (typeof self !== "undefined" && self.clearImmediate) ||
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -5255,6 +5271,15 @@ exports.clearImmediate = (typeof self !== "undefined" && self.clearImmediate) ||
       var buffer = __WEBPACK_IMPORTED_MODULE_1__glyphglyder_obj_exporter__["a" /* meshes */](this.objects).then(function (blob) {
         Object(__WEBPACK_IMPORTED_MODULE_0_file_saver__["saveAs"])(blob, 'svg-to-three.zip');
       });
+    },
+
+    undo: function undo() {
+      this.objects = [];
+      this.scene.remove(this.object);
+      this.object = new THREE.Object3D();
+      this.scene.add(this.object);
+      this.svgRaw = '';
+      this.parsed = false;
     }
 
   },
@@ -19412,7 +19437,7 @@ Vue.compile = compileToFunctions;
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_App_vue__ = __webpack_require__(25);
 /* unused harmony namespace reexport */
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_2cd7d16c_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_App_vue__ = __webpack_require__(124);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_d8849ba6_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_App_vue__ = __webpack_require__(124);
 function injectStyle (ssrContext) {
   __webpack_require__(58)
 }
@@ -19432,7 +19457,7 @@ var __vue_scopeId__ = null
 var __vue_module_identifier__ = null
 var Component = normalizeComponent(
   __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_App_vue__["a" /* default */],
-  __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_2cd7d16c_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_App_vue__["a" /* default */],
+  __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_d8849ba6_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_App_vue__["a" /* default */],
   __vue_template_functional__,
   __vue_styles__,
   __vue_scopeId__,
@@ -19453,7 +19478,7 @@ var content = __webpack_require__(59);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(61)("5de88841", content, true, {});
+var update = __webpack_require__(61)("3641b771", content, true, {});
 
 /***/ }),
 /* 59 */
@@ -19464,7 +19489,7 @@ exports = module.exports = __webpack_require__(60)(false);
 
 
 // module
-exports.push([module.i, "body,html{margin:0;font-family:Nunito,sans-serif}#app,body,html{height:100%}#THREEContainer{position:absolute;top:0;bottom:0;height:100%;width:100%;z-index:-100}.save-button{position:absolute;bottom:10px;left:10px;z-index:100}.pre-parsed{min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center}.pre-parsed>*{margin:20px auto}.pre-parsed form{display:block;width:100%}", ""]);
+exports.push([module.i, "body,html{margin:0;font-family:Nunito,sans-serif}#app,body,html{height:100%}#THREEContainer{position:absolute;top:0;bottom:0;height:100%;width:100%;z-index:-100}.post-parsed{position:absolute;bottom:10px;left:10px;z-index:100}.above-fold,.svg-paste{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center}.above-fold>*,.svg-paste>*{margin:20px auto}.above-fold form,.svg-paste form{display:block;width:100%}", ""]);
 
 // exports
 
@@ -30681,8 +30706,8 @@ var scurvyCommand = function scurvyCommand(shape, points, lastCommand, offset, r
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{attrs:{"id":"app"}},[_c('div',{attrs:{"id":"THREEContainer"}}),_vm._v(" "),(!_vm.parsed)?_c('div',{staticClass:"container pre-parsed"},[_c('img',{staticStyle:{"max-width":"20%"},attrs:{"src":"assets/layercake.svg"}}),_vm._v(" "),_c('h1',[_vm._v("Layercake")]),_vm._v(" "),_c('p',{staticClass:"lead"},[_vm._v("Put your SVGs in the oven, bake some delicious 3D models.")]),_vm._v(" "),_c('form',{on:{"submit":function($event){$event.preventDefault();return _vm.parseSVG($event)}}},[_c('textarea',{directives:[{name:"model",rawName:"v-model",value:(_vm.svgRaw),expression:"svgRaw"}],staticClass:"form-control",attrs:{"type":"file","id":"UploadPictures","rows":"12","placeholder":"Paste raw data here"},domProps:{"value":(_vm.svgRaw)},on:{"input":function($event){if($event.target.composing){ return; }_vm.svgRaw=$event.target.value}}}),_vm._v(" "),_c('br'),_vm._v(" "),_c('button',{attrs:{"type":"submit"}},[_vm._v("Submit")])])]):_vm._e(),_vm._v(" "),_c('div',{staticClass:"post-parsed"},[(_vm.parsed)?_c('button',{staticClass:"btn btn-default save-button",on:{"click":_vm.save}},[_vm._v("\n      Save\n    ")]):_vm._e()])])}
-var staticRenderFns = []
+var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticStyle:{"height":"100%"},attrs:{"id":"app"}},[_c('div',{attrs:{"id":"THREEContainer"}}),_vm._v(" "),(!_vm.parsed)?_c('div',{staticStyle:{"height":"100%"}},[_vm._m(0),_vm._v(" "),_c('div',{staticClass:"container svg-paste",attrs:{"id":"SVGPaste"}},[_vm._m(1),_vm._v(" "),_c('form',{on:{"submit":function($event){$event.preventDefault();return _vm.parseSVG($event)}}},[_c('textarea',{directives:[{name:"model",rawName:"v-model",value:(_vm.svgRaw),expression:"svgRaw"}],staticClass:"form-control",attrs:{"type":"file","id":"UploadPictures","rows":"12","placeholder":"Paste raw data here"},domProps:{"value":(_vm.svgRaw)},on:{"input":function($event){if($event.target.composing){ return; }_vm.svgRaw=$event.target.value}}}),_vm._v(" "),_c('br'),_vm._v(" "),_c('button',{staticClass:"btn btn-primary",attrs:{"type":"submit"}},[_vm._v("Go")])])])]):_vm._e(),_vm._v(" "),(_vm.parsed)?_c('div',{staticClass:"post-parsed "},[_c('button',{staticClass:"btn btn-default",on:{"click":_vm.save}},[_vm._v("\n      Save\n    ")]),_vm._v(" "),(_vm.parsed)?_c('button',{staticClass:"btn btn-danger",on:{"click":_vm.undo}},[_vm._v("Undo")]):_vm._e()]):_vm._e()])}
+var staticRenderFns = [function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"container above-fold"},[_c('img',{staticStyle:{"max-width":"200px"},attrs:{"src":"assets/layercake.svg"}}),_vm._v(" "),_c('h1',[_vm._v("Layercake")]),_vm._v(" "),_c('p',{staticClass:"lead"},[_vm._v("Put your SVGs in the oven, bake some delicious 3D models.")]),_vm._v(" "),_c('div',{staticClass:"row"},[_c('div',{staticClass:"col"},[_c('a',{staticClass:"btn btn-primary",attrs:{"href":"#SVGPaste"}},[_vm._v("Paste in SVG content")])])])])},function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('p',{staticClass:"lead"},[_vm._v("Paste in "),_c('strong',[_vm._v("all")]),_vm._v(" of the SVG data")])}]
 var esExports = { render: render, staticRenderFns: staticRenderFns }
 /* harmony default export */ __webpack_exports__["a"] = (esExports);
 
