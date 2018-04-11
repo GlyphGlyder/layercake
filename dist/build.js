@@ -19412,7 +19412,7 @@ Vue.compile = compileToFunctions;
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_App_vue__ = __webpack_require__(25);
 /* unused harmony namespace reexport */
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_de8ea6ce_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_App_vue__ = __webpack_require__(124);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_2cd7d16c_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_App_vue__ = __webpack_require__(124);
 function injectStyle (ssrContext) {
   __webpack_require__(58)
 }
@@ -19432,7 +19432,7 @@ var __vue_scopeId__ = null
 var __vue_module_identifier__ = null
 var Component = normalizeComponent(
   __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_App_vue__["a" /* default */],
-  __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_de8ea6ce_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_App_vue__["a" /* default */],
+  __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_2cd7d16c_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_App_vue__["a" /* default */],
   __vue_template_functional__,
   __vue_styles__,
   __vue_scopeId__,
@@ -19453,7 +19453,7 @@ var content = __webpack_require__(59);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(61)("64f25dda", content, true, {});
+var update = __webpack_require__(61)("5de88841", content, true, {});
 
 /***/ }),
 /* 59 */
@@ -30681,7 +30681,7 @@ var scurvyCommand = function scurvyCommand(shape, points, lastCommand, offset, r
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{attrs:{"id":"app"}},[_c('div',{attrs:{"id":"THREEContainer"}}),_vm._v(" "),(!_vm.parsed)?_c('div',{staticClass:"container pre-parsed"},[_c('img',{staticStyle:{"max-width":"20%"},attrs:{"src":"/assets/layercake.svg"}}),_vm._v(" "),_c('h1',[_vm._v("Layercake")]),_vm._v(" "),_c('p',{staticClass:"lead"},[_vm._v("Put your SVGs in the oven, bake some delicious 3D models.")]),_vm._v(" "),_c('form',{on:{"submit":function($event){$event.preventDefault();return _vm.parseSVG($event)}}},[_c('textarea',{directives:[{name:"model",rawName:"v-model",value:(_vm.svgRaw),expression:"svgRaw"}],staticClass:"form-control",attrs:{"type":"file","id":"UploadPictures","rows":"12","placeholder":"Paste raw data here"},domProps:{"value":(_vm.svgRaw)},on:{"input":function($event){if($event.target.composing){ return; }_vm.svgRaw=$event.target.value}}}),_vm._v(" "),_c('br'),_vm._v(" "),_c('button',{attrs:{"type":"submit"}},[_vm._v("Submit")])])]):_vm._e(),_vm._v(" "),_c('div',{staticClass:"post-parsed"},[(_vm.parsed)?_c('button',{staticClass:"btn btn-default save-button",on:{"click":_vm.save}},[_vm._v("\n      Save\n    ")]):_vm._e()])])}
+var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{attrs:{"id":"app"}},[_c('div',{attrs:{"id":"THREEContainer"}}),_vm._v(" "),(!_vm.parsed)?_c('div',{staticClass:"container pre-parsed"},[_c('img',{staticStyle:{"max-width":"20%"},attrs:{"src":"assets/layercake.svg"}}),_vm._v(" "),_c('h1',[_vm._v("Layercake")]),_vm._v(" "),_c('p',{staticClass:"lead"},[_vm._v("Put your SVGs in the oven, bake some delicious 3D models.")]),_vm._v(" "),_c('form',{on:{"submit":function($event){$event.preventDefault();return _vm.parseSVG($event)}}},[_c('textarea',{directives:[{name:"model",rawName:"v-model",value:(_vm.svgRaw),expression:"svgRaw"}],staticClass:"form-control",attrs:{"type":"file","id":"UploadPictures","rows":"12","placeholder":"Paste raw data here"},domProps:{"value":(_vm.svgRaw)},on:{"input":function($event){if($event.target.composing){ return; }_vm.svgRaw=$event.target.value}}}),_vm._v(" "),_c('br'),_vm._v(" "),_c('button',{attrs:{"type":"submit"}},[_vm._v("Submit")])])]):_vm._e(),_vm._v(" "),_c('div',{staticClass:"post-parsed"},[(_vm.parsed)?_c('button',{staticClass:"btn btn-default save-button",on:{"click":_vm.save}},[_vm._v("\n      Save\n    ")]):_vm._e()])])}
 var staticRenderFns = []
 var esExports = { render: render, staticRenderFns: staticRenderFns }
 /* harmony default export */ __webpack_exports__["a"] = (esExports);

@@ -10,7 +10,7 @@
       and a form to copy/paste the raw SVG data -->
     <div class="container pre-parsed" v-if="!parsed">
 
-      <img src="/assets/layercake.svg" style="max-width: 20%;"/>
+      <img src="assets/layercake.svg" style="max-width: 20%;"/>
       <h1>Layercake</h1>
       <p class="lead">Put your SVGs in the oven, bake some delicious 3D models.</p>
 
