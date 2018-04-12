@@ -36,6 +36,8 @@ export default {
 		// Possible one of the hardest, as this entails a lot of regexp parsing
 		for(var i = 0; i < paths.length; i ++) {
 
+			color = "#000000";
+
 			// First, we only want the actual path data, so let's get that.
 			let pathRegExp = paths[i].match(/d="([^"]*)"/);
 			let pathData = "";
@@ -74,7 +76,6 @@ export default {
 
 				} else {
 					lastCommand = shapeCommand(currentTarget, pathCommands[j], lastCommand, offset);
-					console.log(lastCommand);
 				}
 
 			}
@@ -212,36 +213,39 @@ var curveCommand = function(shape, points, offset, relative) {
 			shape.currentPoint.x + parseFloat(points[4]),
 			shape.currentPoint.y - parseFloat(points[5])
 		);
-		return;
+	} else {
+		shape.bezierCurveTo(
+			parseFloat(points[0]) - offset.x,
+			offset.y - parseFloat(points[1]),
+			parseFloat(points[2]) - offset.x,
+			offset.y - parseFloat(points[3]),
+			parseFloat(points[4]) - offset.x,
+			offset.y - parseFloat(points[5])
+		);
 	}
 
-	shape.bezierCurveTo(
-		parseFloat(points[0]) - offset.x,
-		offset.y - parseFloat(points[1]),
-		parseFloat(points[2]) - offset.x,
-		offset.y - parseFloat(points[3]),
-		parseFloat(points[4]) - offset.x,
-		offset.y - parseFloat(points[5])
-	);
+	if (points.length > 6) {
+		curveCommand(shape, points.slice(6), offset, relative);
+	}
 }
 
 var lineCommand = function(shape, points, offset, relative) {
 
-	if (points.length == 2) {
-
-		if (relative) {
-			shape.lineTo(
-				shape.currentPoint.x + parseFloat(points[0]),
-				shape.currentPoint.y - parseFloat(points[1])
-			);
-			return;
-		}
-
+	if (relative) {
+		shape.lineTo(
+			shape.currentPoint.x + parseFloat(points[0]),
+			shape.currentPoint.y - parseFloat(points[1])
+		);
+	} else {
 		shape.lineTo(
 			parseFloat(points[0]) - offset.x,
 			offset.y - parseFloat(points[1])
 		);
+	}
 
+
+	if (points.length > 2) {
+		lineCommand(shape, points.slice(2), offset, relative);
 	}
 }
 
@@ -251,21 +255,20 @@ var lineCommand = function(shape, points, offset, relative) {
  */
 var moveCommand = function(shape, points, offset, relative) {
 
-	if (points.length == 2) {
-
-		if (relative) {
-			shape.moveTo(
-				shape.currentPoint.x + parseFloat(points[0]),
-				shape.currentPoint.y - parseFloat(points[1])
-			);
-			return;
-		}
-
+	if (relative) {
+		shape.moveTo(
+			shape.currentPoint.x + parseFloat(points[0]),
+			shape.currentPoint.y - parseFloat(points[1])
+		);
+	} else {
 		shape.moveTo(
 			parseFloat(points[0]) - offset.x,
 			offset.y - parseFloat(points[1])
 		);
+	}
 
+	if (points.length > 2) {
+		lineCommand(shape, points.slice(2), offset, relative);
 	}
 
 }
@@ -287,15 +290,18 @@ var quadraticCommand = function(shape, points, offset, relative) {
 			shape.currentPoint.x + parseFloat(points[2]),
 			shape.currentPoint.y - parseFloat(points[3])
 		);
-		return;
+	} else {
+		shape.quadraticCurveTo(
+			parseFloat(points[0]) - offset.x,
+			offset.y - parseFloat(points[1]),
+			parseFloat(points[2]) - offset.x,
+			offset.y - parseFloat(points[3])
+		);
 	}
 
-	shape.quadraticCurveTo(
-		parseFloat(points[0]) - offset.x,
-		offset.y - parseFloat(points[1]),
-		parseFloat(points[2]) - offset.x,
-		offset.y - parseFloat(points[3])
-	);
+	if (points.length > 4) {
+		quadraticCommand(shape, points.slice(4), offset, relative);
+	}
 
 }
 
@@ -439,8 +445,6 @@ var shapeCommand = function(shape, command, lastCommand, offset) {
  */
 var scurvyCommand = function(shape, points, lastCommand, offset, relative) {
 
-	console.log(lastCommand);
-
 	// Right then, so let's determine what the first control points should be.
 	let firstPoint = {x: 0, y: 0};
 	if (lastCommand.letter == "S" || lastCommand.letter == "s" ||
@@ -467,15 +471,18 @@ var scurvyCommand = function(shape, points, lastCommand, offset, relative) {
 			shape.currentPoint.x + parseFloat(points[2]),
 			shape.currentPoint.y - parseFloat(points[3])
 		);
-		return;
+	} else {
+		shape.bezierCurveTo(
+			firstPoint.x - offset.x,
+			offset.y - firstPoint.y,
+			parseFloat(points[1]) - offset.x,
+			offset.y - parseFloat(points[2]),
+			parseFloat(points[3]) - offset.x,
+			offset.y - parseFloat(points[4])
+		);
 	}
 
-	shape.bezierCurveTo(
-		firstPoint.x - offset.x,
-		offset.y - firstPoint.y,
-		parseFloat(points[1]) - offset.x,
-		offset.y - parseFloat(points[2]),
-		parseFloat(points[3]) - offset.x,
-		offset.y - parseFloat(points[4])
-	);
+	if (points.length > 4) {
+		scurvyCommand(shape, points.slice(4), {letter: "S", points: points.slice(0, 4)}, offset, relative);
+	}
 }

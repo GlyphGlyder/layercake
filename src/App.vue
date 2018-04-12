@@ -139,7 +139,7 @@ export default {
 
           // Then our polygons
           if (polygons != null) {
-            meshes = meshes.concat(builders.makePolygons(polygons, _this.originOoffset, index, groups.length));
+            meshes = meshes.concat(builders.makePolygons(polygons, _this.originOffset, index, groups.length));
           }
 
           // And finally, those damned tricky paths

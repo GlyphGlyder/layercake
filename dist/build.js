@@ -5202,7 +5202,7 @@ exports.clearImmediate = (typeof self !== "undefined" && self.clearImmediate) ||
 
           // Then our polygons
           if (polygons != null) {
-            meshes = meshes.concat(__WEBPACK_IMPORTED_MODULE_2__builders__["a" /* default */].makePolygons(polygons, _this2.originOoffset, index, groups.length));
+            meshes = meshes.concat(__WEBPACK_IMPORTED_MODULE_2__builders__["a" /* default */].makePolygons(polygons, _this2.originOffset, index, groups.length));
           }
 
           // And finally, those damned tricky paths
@@ -19437,7 +19437,7 @@ Vue.compile = compileToFunctions;
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_App_vue__ = __webpack_require__(25);
 /* unused harmony namespace reexport */
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_d8849ba6_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_App_vue__ = __webpack_require__(124);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_81ebf204_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_App_vue__ = __webpack_require__(124);
 function injectStyle (ssrContext) {
   __webpack_require__(58)
 }
@@ -19457,7 +19457,7 @@ var __vue_scopeId__ = null
 var __vue_module_identifier__ = null
 var Component = normalizeComponent(
   __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_App_vue__["a" /* default */],
-  __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_d8849ba6_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_App_vue__["a" /* default */],
+  __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_81ebf204_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_App_vue__["a" /* default */],
   __vue_template_functional__,
   __vue_styles__,
   __vue_scopeId__,
@@ -19478,7 +19478,7 @@ var content = __webpack_require__(59);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(61)("3641b771", content, true, {});
+var update = __webpack_require__(61)("4382244e", content, true, {});
 
 /***/ }),
 /* 59 */
@@ -30179,6 +30179,8 @@ module.exports = ZipEntry;
 		// Possible one of the hardest, as this entails a lot of regexp parsing
 		for (var i = 0; i < paths.length; i++) {
 
+			color = "#000000";
+
 			// First, we only want the actual path data, so let's get that.
 			var pathRegExp = paths[i].match(/d="([^"]*)"/);
 			var pathData = "";
@@ -30216,7 +30218,6 @@ module.exports = ZipEntry;
 					lastCommand = { letter: "Z" };
 				} else {
 					lastCommand = shapeCommand(currentTarget, pathCommands[j], lastCommand, offset);
-					console.log(lastCommand);
 				}
 			}
 
@@ -30341,22 +30342,25 @@ var curveCommand = function curveCommand(shape, points, offset, relative) {
 
 	if (relative) {
 		shape.bezierCurveTo(shape.currentPoint.x + parseFloat(points[0]), shape.currentPoint.y - parseFloat(points[1]), shape.currentPoint.x + parseFloat(points[2]), shape.currentPoint.y - parseFloat(points[3]), shape.currentPoint.x + parseFloat(points[4]), shape.currentPoint.y - parseFloat(points[5]));
-		return;
+	} else {
+		shape.bezierCurveTo(parseFloat(points[0]) - offset.x, offset.y - parseFloat(points[1]), parseFloat(points[2]) - offset.x, offset.y - parseFloat(points[3]), parseFloat(points[4]) - offset.x, offset.y - parseFloat(points[5]));
 	}
 
-	shape.bezierCurveTo(parseFloat(points[0]) - offset.x, offset.y - parseFloat(points[1]), parseFloat(points[2]) - offset.x, offset.y - parseFloat(points[3]), parseFloat(points[4]) - offset.x, offset.y - parseFloat(points[5]));
+	if (points.length > 6) {
+		curveCommand(shape, points.slice(6), offset, relative);
+	}
 };
 
 var lineCommand = function lineCommand(shape, points, offset, relative) {
 
-	if (points.length == 2) {
-
-		if (relative) {
-			shape.lineTo(shape.currentPoint.x + parseFloat(points[0]), shape.currentPoint.y - parseFloat(points[1]));
-			return;
-		}
-
+	if (relative) {
+		shape.lineTo(shape.currentPoint.x + parseFloat(points[0]), shape.currentPoint.y - parseFloat(points[1]));
+	} else {
 		shape.lineTo(parseFloat(points[0]) - offset.x, offset.y - parseFloat(points[1]));
+	}
+
+	if (points.length > 2) {
+		lineCommand(shape, points.slice(2), offset, relative);
 	}
 };
 
@@ -30366,14 +30370,14 @@ var lineCommand = function lineCommand(shape, points, offset, relative) {
  */
 var moveCommand = function moveCommand(shape, points, offset, relative) {
 
-	if (points.length == 2) {
-
-		if (relative) {
-			shape.moveTo(shape.currentPoint.x + parseFloat(points[0]), shape.currentPoint.y - parseFloat(points[1]));
-			return;
-		}
-
+	if (relative) {
+		shape.moveTo(shape.currentPoint.x + parseFloat(points[0]), shape.currentPoint.y - parseFloat(points[1]));
+	} else {
 		shape.moveTo(parseFloat(points[0]) - offset.x, offset.y - parseFloat(points[1]));
+	}
+
+	if (points.length > 2) {
+		lineCommand(shape, points.slice(2), offset, relative);
 	}
 };
 
@@ -30389,10 +30393,13 @@ var quadraticCommand = function quadraticCommand(shape, points, offset, relative
 
 	if (relative) {
 		shape.quadraticCurveTo(shape.currentPoint.x + parseFloat(points[0]), shape.currentPoint.y - parseFloat(points[1]), shape.currentPoint.x + parseFloat(points[2]), shape.currentPoint.y - parseFloat(points[3]));
-		return;
+	} else {
+		shape.quadraticCurveTo(parseFloat(points[0]) - offset.x, offset.y - parseFloat(points[1]), parseFloat(points[2]) - offset.x, offset.y - parseFloat(points[3]));
 	}
 
-	shape.quadraticCurveTo(parseFloat(points[0]) - offset.x, offset.y - parseFloat(points[1]), parseFloat(points[2]) - offset.x, offset.y - parseFloat(points[3]));
+	if (points.length > 4) {
+		quadraticCommand(shape, points.slice(4), offset, relative);
+	}
 };
 
 /**
@@ -30522,8 +30529,6 @@ var shapeCommand = function shapeCommand(shape, command, lastCommand, offset) {
  */
 var scurvyCommand = function scurvyCommand(shape, points, lastCommand, offset, relative) {
 
-	console.log(lastCommand);
-
 	// Right then, so let's determine what the first control points should be.
 	var firstPoint = { x: 0, y: 0 };
 	if (lastCommand.letter == "S" || lastCommand.letter == "s" || lastCommand.letter == "C" || lastCommand.letter == "c") {
@@ -30542,10 +30547,13 @@ var scurvyCommand = function scurvyCommand(shape, points, lastCommand, offset, r
 	// From here it's basically a curve command.
 	if (relative) {
 		shape.bezierCurveTo(shape.currentPoint.x + firstPoint.x, shape.currentPoint.y - firstPoint.y, shape.currentPoint.x + parseFloat(points[0]), shape.currentPoint.y - parseFloat(points[1]), shape.currentPoint.x + parseFloat(points[2]), shape.currentPoint.y - parseFloat(points[3]));
-		return;
+	} else {
+		shape.bezierCurveTo(firstPoint.x - offset.x, offset.y - firstPoint.y, parseFloat(points[1]) - offset.x, offset.y - parseFloat(points[2]), parseFloat(points[3]) - offset.x, offset.y - parseFloat(points[4]));
 	}
 
-	shape.bezierCurveTo(firstPoint.x - offset.x, offset.y - firstPoint.y, parseFloat(points[1]) - offset.x, offset.y - parseFloat(points[2]), parseFloat(points[3]) - offset.x, offset.y - parseFloat(points[4]));
+	if (points.length > 4) {
+		scurvyCommand(shape, points.slice(4), { letter: "S", points: points.slice(0, 4) }, offset, relative);
+	}
 };
 
 /***/ }),
