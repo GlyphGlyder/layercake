@@ -55,7 +55,7 @@ export default {
 			// to our shape
 			let shape = new THREE.Shape();
 			let currentTarget = shape;
-			let lastCommand = {};
+			let lastCommand = {letter: '', points: []};
 			for(var j = 0; j < pathCommands.length; j ++) {
 
 				if (pathCommands[j] == "Z" || pathCommands[j] == "z") {
@@ -72,7 +72,7 @@ export default {
 					currentTarget = new THREE.Path();
 					currentTarget.moveTo(oldX, oldY);
 
-					lastCommand = {letter: "Z"};
+					lastCommand = {letter: "Z", points: []};
 
 				} else {
 					lastCommand = shapeCommand(currentTarget, pathCommands[j], lastCommand, offset);
@@ -190,9 +190,20 @@ var arcCommand = function(shape, points, offset, relative) {
 	// It's implicitly assumed that anytime there's more than the standard number
 	// of points then the next set of points is another arc command.  Thus, if
 	// the point length is greater than 7, call arcCommand again.
+	var lastCommand = {letter: '', points};
 	if (points.length > 7) {
-		arcCommand(shape, points.slice(7), offset, relative);
+		lastCommand = arcCommand(shape, points.slice(7), offset, relative);
+	} else {
+
+		if (relative) {
+			lastCommand.letter = "a";
+		} else {
+			lastCommand.letter = "A";
+		}
+
 	}
+
+	return lastCommand;
 }
 
 /**
@@ -224,9 +235,21 @@ var curveCommand = function(shape, points, offset, relative) {
 		);
 	}
 
+	var lastCommand = {letter: '', points};
+
 	if (points.length > 6) {
-		curveCommand(shape, points.slice(6), offset, relative);
+		lastCommand = curveCommand(shape, points.slice(6), offset, relative);
+	} else {
+
+		if (relative) {
+			lastCommand.letter = "c";
+		} else {
+			lastCommand.letter = "C";
+		}
+
 	}
+
+	return lastCommand;
 }
 
 var lineCommand = function(shape, points, offset, relative) {
@@ -243,10 +266,21 @@ var lineCommand = function(shape, points, offset, relative) {
 		);
 	}
 
+	var lastCommand = {letter: '', points};
 
 	if (points.length > 2) {
-		lineCommand(shape, points.slice(2), offset, relative);
+		lastCommand = lineCommand(shape, points.slice(2), offset, relative);
+	} else {
+
+		if (relative) {
+			lastCommand.letter = "l";
+		} else {
+			lastCommand.letter = "L";
+		}
+
 	}
+
+	return lastCommand;
 }
 
 /**
@@ -267,9 +301,21 @@ var moveCommand = function(shape, points, offset, relative) {
 		);
 	}
 
+	var lastCommand = {letter: '', points};
+
 	if (points.length > 2) {
-		lineCommand(shape, points.slice(2), offset, relative);
+		lastCommand = lineCommand(shape, points.slice(2), offset, relative);
+	} else {
+
+		if (relative) {
+			lastCommand.letter = "m";
+		} else {
+			lastCommand.letter = "M";
+		}
+
 	}
+
+	return lastCommand;
 
 }
 
@@ -299,9 +345,23 @@ var quadraticCommand = function(shape, points, offset, relative) {
 		);
 	}
 
+	var lastCommand = {letter: '', points};
+
 	if (points.length > 4) {
-		quadraticCommand(shape, points.slice(4), offset, relative);
+
+		lastCommand = quadraticCommand(shape, points.slice(4), offset, relative);
+
+	} else {
+
+		if (relative) {
+			lastCommand.letter = "q";
+		} else {
+			lastCommand.letter = "Q";
+		}
+
 	}
+
+	return lastCommand;
 
 }
 
@@ -333,17 +393,17 @@ var shapeCommand = function(shape, command, lastCommand, offset) {
 	switch(letter[1]) {
 
 		case ("a"):
-			arcCommand(shape, points, offset, true);
+			lastCommand = arcCommand(shape, points, offset, true);
 			break;
 		case ("A"):
-			arcCommand(shape, points, offset, false);
+			lastCommand = arcCommand(shape, points, offset, false);
 			break;
 
 		case ("c"):
-			curveCommand(shape, points, offset, true);
+			lastCommand = curveCommand(shape, points, offset, true);
 			break;
 		case ("C"):
-			curveCommand(shape, points, offset, false);
+			lastCommand = curveCommand(shape, points, offset, false);
 			break;
 
 		case ("h"):
@@ -354,6 +414,7 @@ var shapeCommand = function(shape, command, lastCommand, offset) {
 					shape.currentPoint.y
 				);
 			}
+			lastCommand = { letter: "h", points };
 			break;
 		case ("H"):
 			// Horizontal line.  Use line to again, and just pass in
@@ -364,38 +425,39 @@ var shapeCommand = function(shape, command, lastCommand, offset) {
 					shape.currentPoint.y
 				);
 			}
+			lastCommand = { letter: "H", points };
 			break;
 
 		case ("L"):
 			// Line to
-			lineCommand(shape, points, offset, false);
+			lastCommand = lineCommand(shape, points, offset, false);
 			break;
 		case ("l"):
-			lineCommand(shape, points, offset, true);
+			lastCommand = lineCommand(shape, points, offset, true);
 			break;
 
 		case ("M"):
 			// Move to command.
-			moveCommand(shape, points, offset, false);
+			lastCommand = moveCommand(shape, points, offset, false);
 			break;
 		case ("m"):
-			moveCommand(shape, points, offset, true);
+			lastCommand = moveCommand(shape, points, offset, true);
 			break;
 
 		case ("Q"):
-			quadraticCommand(shape, points, offset, false);
+			lastCommand = quadraticCommand(shape, points, offset, false);
 			break;
 		case ("q"):
-			quadraticCommand(shape, points, offset, true);
+			lastCommand = quadraticCommand(shape, points, offset, true);
 			break;
 
 		// Not sure if it's short for S-curve, or shape, or smooth.  Regardless,
 		// it's basically a special type of mirrored C command.
 		case ("s"):
-			scurvyCommand(shape, points, lastCommand, offset, true);
+			lastCommand = scurvyCommand(shape, points, lastCommand, offset, true);
 			break;
 		case ("S"):
-			scurvyCommand(shape, points, lastCommand, offset, false);
+			lastCommand = scurvyCommand(shape, points, lastCommand, offset, false);
 			break;
 
 		// T-curves?
@@ -410,6 +472,7 @@ var shapeCommand = function(shape, command, lastCommand, offset) {
 					offset.y - parseFloat(points[0])
 				);
 			}
+			lastCommand = { letter: "V", points };
 			break;
 		case ("v"):
 			// Relative vertical line
@@ -419,18 +482,20 @@ var shapeCommand = function(shape, command, lastCommand, offset) {
 					shape.currentPoint.y - parseFloat(points[0])
 				);
 			}
+			lastCommand = { letter: "v", points };
 			break;
 
 		case ("Z"):
 		case ("z"):
 			shape.lineTo(shape.firstPoint.x, shape.firstPoint.y);
+			lastCommand = { letter: "Z", points };
 			break;
 	}
 
 	if (shape.firstPoint === undefined) {
 		shape.firstPoint = Object.assign({}, shape.currentPoint);
 	}
-	return { letter: letter[1], points };
+	return lastCommand;
 }
 
 /**
@@ -445,27 +510,66 @@ var shapeCommand = function(shape, command, lastCommand, offset) {
  */
 var scurvyCommand = function(shape, points, lastCommand, offset, relative) {
 
+	console.log(lastCommand.letter);
+	console.log(lastCommand.points);
+
 	// Right then, so let's determine what the first control points should be.
 	let firstPoint = {x: 0, y: 0};
 	if (lastCommand.letter == "S" || lastCommand.letter == "s" ||
 			lastCommand.letter == "C" || lastCommand.letter == "c" ) {
+
 		// The more straightforward case.  We're doing a mirror of the last control
-		// point used
-		firstPoint.x = parseFloat(lastCommand.points[2]) * -1;
-		firstPoint.y = parseFloat(lastCommand.points[3]) * -1;
+		// point used.  The reflection point is relative to shape.currentPoint, so
+		// keep that in mind
+		if (lastCommand.letter == "S" || lastCommand.letter == "C") {
+			// absolute
+			let deltaX = parseFloat(lastCommand.points[2]) - offset.x - shape.currentPoint.x;
+			let deltaY = offset.y - parseFloat(lastCommand.points[3]) - shape.currentPoint.y;
+
+			firstPoint.x = shape.currentPoint.x - deltaX;
+			firstPoint.y = shape.currentPoint.y - deltaY;
+		} else {
+			// relative
+			if (lastCommand.letter == "c") {
+				// First, get the abs position of the point that the curve command is
+				// relative to
+				let firstX = shape.currentPoint.x - parseFloat(lastCommand.points[4]);
+				let firstY = shape.currentPoint.y + parseFloat(lastCommand.points[5]);
+
+				// Now let's use the two above to get the absolute position of the last
+				// control point
+				let absX = firstX + parseFloat(lastCommand.points[2]);
+				let absY = firstY - parseFloat(lastCommand.points[3]);
+
+				// Now we can use that to calculate the delta
+				let deltaX = absX - shape.currentPoint.x;
+				let deltaY = absY - shape.currentPoint.y;
+
+				// And finally, calculate the mirror
+				firstPoint.x = shape.currentPoint.x - deltaX;
+				firstPoint.y = shape.currentPoint.y - deltaY;
+			}
+
+		}
+
 	} else {
+
 		// Otherwise, the first point would be basically the currentPoint in shape
 		if (!relative) {
+			firstPoint.x = shape.currentPoint.x - offset.x;
+			firstPoint.y = offset.y - shape.currentPoint.y;
+		} else {
 			firstPoint.x = shape.currentPoint.x;
 			firstPoint.y = shape.currentPoint.y;
 		}
+
 	}
 
 	// From here it's basically a curve command.
 	if (relative) {
 		shape.bezierCurveTo(
-			shape.currentPoint.x + firstPoint.x,
-			shape.currentPoint.y - firstPoint.y,
+			firstPoint.x,
+			firstPoint.y,
 			shape.currentPoint.x + parseFloat(points[0]),
 			shape.currentPoint.y - parseFloat(points[1]),
 			shape.currentPoint.x + parseFloat(points[2]),
@@ -473,16 +577,25 @@ var scurvyCommand = function(shape, points, lastCommand, offset, relative) {
 		);
 	} else {
 		shape.bezierCurveTo(
-			firstPoint.x - offset.x,
-			offset.y - firstPoint.y,
-			parseFloat(points[1]) - offset.x,
-			offset.y - parseFloat(points[2]),
-			parseFloat(points[3]) - offset.x,
-			offset.y - parseFloat(points[4])
+			firstPoint.x,
+			firstPoint.y,
+			parseFloat(points[0]) - offset.x,
+			offset.y - parseFloat(points[1]),
+			parseFloat(points[2]) - offset.x,
+			offset.y - parseFloat(points[3])
 		);
 	}
 
 	if (points.length > 4) {
-		scurvyCommand(shape, points.slice(4), {letter: "S", points: points.slice(0, 4)}, offset, relative);
+		lastCommand = scurvyCommand(shape, points.slice(4), {letter: "S", points: points.slice(0, 4)}, offset, relative);
+	} else {
+		if (relative) {
+			lastCommand.letter = "s";
+		} else {
+			lastCommand.letter = "S";
+		}
+		lastCommand.points = points;
 	}
+
+	return lastCommand;
 }
